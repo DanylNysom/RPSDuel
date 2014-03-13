@@ -6,18 +6,30 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by dylan on 3/11/14.
  */
 public class NewUserFragment extends Fragment {
     String name = null;
+
+//      doesn't work...
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        getView().findViewById(R.id.name_box).requestFocus();
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +53,23 @@ public class NewUserFragment extends Fragment {
             }
         });
 
+        textBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (textBox.length() > 0) {
+                        return ok.performClick();
+                    } else {
+                        Toast toast = Toast.makeText(getActivity(), "Please enter a name", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +79,8 @@ public class NewUserFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
+
+        textBox.requestFocus();
 
         return view;
     }
