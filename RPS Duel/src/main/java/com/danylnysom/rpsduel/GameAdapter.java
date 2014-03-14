@@ -8,6 +8,8 @@ import android.widget.ListAdapter;
 
 /**
  * Adapter for generating clickable items that the user can use to select a weapon.
+ * <p/>
+ * Right now they're buttons with text, but eventually they should be images.
  */
 public class GameAdapter implements ListAdapter {
     private Game game;
@@ -73,6 +75,7 @@ public class GameAdapter implements ListAdapter {
                 myCallBack.weaponSelected(position);
             }
         });
+        button.setHeight(200);
         return button;
     }
 

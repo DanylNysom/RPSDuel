@@ -1,11 +1,25 @@
 package com.danylnysom.rpsduel;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.database.DataSetObserver;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 /**
  * Represents a single RPS match against an arbitrary opponent or opponents.
  */
 public abstract class Game {
+    public static final String RPS_3 = "Traditional";
+    public static final String RPS_5 = "Lizard Spock";
+    public static final String RPS_7 = "RPS 7";
+    public static final String RPS_9 = "RPS 9";
+    public final static String[] sets = {RPS_3, RPS_5, RPS_7, RPS_9};
+
     private static final String[] WEAPONS_3 = {"Rock", "Paper", "Scissors"};
     private static final String[] WEAPONS_5 = {"Rock", "Scissors", "Lizard", "Paper", "Spock"};
     private static final String[] WEAPONS_7 = {"Rock", "Water", "Air", "Paper",
@@ -50,32 +64,48 @@ public abstract class Game {
             {"is pounded out by", "is \'fire\'d by", "is put out by", "is blown out by", "burns", "burns", "burns", "melts", "ties"}
     };
 
-    public Game(int weaponSetSize) {
+    private GameFragment fragment;
+
+    public Game(Context context, GameFragment fragment) {
         playerChoice = -1;
         opponentChoice = -1;
-        weaponCount = weaponSetSize;
-        switch (weaponCount) {
-            case 3:
-                weapons = WEAPONS_3;
-                messages = MESSAGES_3;
-                break;
-            case 5:
-                weapons = WEAPONS_5;
-                messages = MESSAGES_5;
-                break;
-            case 7:
-                weapons = WEAPONS_7;
-                messages = MESSAGES_7;
-                break;
-            case 9:
-                weapons = WEAPONS_9;
-                messages = MESSAGES_9;
-                break;
-            default:
-                weapons = WEAPONS_3;
-                messages = MESSAGES_3;
-                break;
-        }
+        this.fragment = fragment;
+    }
+
+    protected void showWeaponSetPopup(final Context context) {
+        WeaponListAdapter adapter = new WeaponListAdapter();
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setTitle("Choose a weapon set");
+        alert.setAdapter(adapter, new Dialog.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        weapons = WEAPONS_3;
+                        messages = MESSAGES_3;
+                        break;
+                    case 1:
+                        weapons = WEAPONS_5;
+                        messages = MESSAGES_5;
+                        break;
+                    case 2:
+                        weapons = WEAPONS_7;
+                        messages = MESSAGES_7;
+                        break;
+                    case 3:
+                        weapons = WEAPONS_9;
+                        messages = MESSAGES_9;
+                        break;
+                    default:
+                        weapons = WEAPONS_3;
+                        messages = MESSAGES_3;
+                        break;
+                }
+                weaponCount = weapons.length;
+                fragment.recreateView();
+            }
+        }).setCancelable(false);
+        alert.show();
     }
 
     public void setPlayerChoice(int choice) {
@@ -105,4 +135,73 @@ public abstract class Game {
     }
 
     public abstract int getResult();
+
+    protected class WeaponListAdapter implements ListAdapter {
+        @Override
+        public boolean areAllItemsEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            return Player.getPlayer().getStat(Player.LEVEL) >= position;
+        }
+
+        @Override
+        public void registerDataSetObserver(DataSetObserver observer) {
+
+        }
+
+        @Override
+        public void unregisterDataSetObserver(DataSetObserver observer) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return sets.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return sets[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView view = (TextView) convertView;
+            if (view == null) {
+                view = new TextView(parent.getContext());
+            }
+            view.setText(sets[position]);
+            view.setHeight(180);
+            view.setTextAppearance(view.getContext(), R.style.TextAppearance_AppCompat_Widget_PopupMenu_Large);
+            return view;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 1;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return sets.length == 0;
+        }
+    }
 }

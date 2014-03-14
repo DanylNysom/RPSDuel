@@ -1,7 +1,5 @@
 package com.danylnysom.rpsduel;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -21,7 +19,7 @@ import android.widget.Toast;
 /**
  * A Fragment implementation to be displayed upon first run of the program, or when the user's data
  * has been cleared.
- *
+ * <p/>
  * A textbox is provided for the user to enter a name, with an "OK" button to confirm.
  */
 public class NewUserFragment extends Fragment {
@@ -71,7 +69,7 @@ public class NewUserFragment extends Fragment {
             public void onClick(View v) {
                 name = textBox.getText().toString();
                 initializePlayer();
-                ((RPSActivity) getActivity()).initializeActionBar(name);
+                ((RPSActivity) getActivity()).initializeActionBar();
                 getFragmentManager().popBackStack();
             }
         });
@@ -90,8 +88,6 @@ public class NewUserFragment extends Fragment {
     }
 
     private void initializePlayer() {
-        SharedPreferences.Editor editor = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
-        editor.putString(Player.NAME, name);
-        editor.commit();
+        Player.getPlayer().setName(name);
     }
 }

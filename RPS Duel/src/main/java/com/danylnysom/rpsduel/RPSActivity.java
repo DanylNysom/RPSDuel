@@ -25,7 +25,7 @@ public class RPSActivity extends ActionBarActivity {
             ft.addToBackStack("newuser");
             ft.commit();
         } else {
-            initializeActionBar(name);
+            initializeActionBar();
         }
     }
 
@@ -50,12 +50,14 @@ public class RPSActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Sets the title on the Action Bar to the provided player name.
-     *
-     * @param name The name of the player. Must be non-null.
-     */
-    public void initializeActionBar(String name) {
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Player.getPlayer().saveChanges(getPreferences(MODE_PRIVATE));
+    }
+
+    public void initializeActionBar() {
+        String name = Player.getPlayer().getName();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
@@ -65,5 +67,10 @@ public class RPSActivity extends ActionBarActivity {
         actionBar.setCustomView(view);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.show();
+    }
+
+    public void updateLevelDisplay() {
+        RelativeLayout view = (RelativeLayout) getSupportActionBar().getCustomView();
+        ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(Player.getPlayer().getStat(Player.LEVEL)));
     }
 }

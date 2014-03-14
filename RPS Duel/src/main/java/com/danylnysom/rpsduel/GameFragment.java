@@ -23,6 +23,8 @@ public class GameFragment extends Fragment implements GameCallBack {
     private final static String WEAPONCOUNT_KEY = "count";
     private static Toast currentToast = null;
 
+    private static GridView grid;
+
     private Game game;
 
     public static GameFragment newInstance(int weaponCount, int type) {
@@ -38,14 +40,13 @@ public class GameFragment extends Fragment implements GameCallBack {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        int weaponCount = args.getInt(WEAPONCOUNT_KEY);
         int gameType = args.getInt(GAMETYPE_KEY, PRACTICE);
         switch (gameType) {
             case PRACTICE:
-                game = new PracticeGame(weaponCount);
+                game = new PracticeGame(getActivity(), this);
                 break;
             default:
-                game = new PracticeGame(weaponCount);
+                game = new PracticeGame(getActivity(), this);
                 break;
         }
     }
@@ -55,7 +56,7 @@ public class GameFragment extends Fragment implements GameCallBack {
         super.onCreateView(inflater, container, savedInstanceState);
 
         RelativeLayout view = (RelativeLayout) inflater.inflate(R.layout.fragment_game, null, false);
-        GridView grid = (GridView) view.findViewById(R.id.weapon_grid);
+        grid = (GridView) view.findViewById(R.id.weapon_grid);
         grid.setAdapter(new GameAdapter(game, this));
         return view;
     }
@@ -69,13 +70,16 @@ public class GameFragment extends Fragment implements GameCallBack {
 
         game.setPlayerChoice(position);
         int result = game.getResult();
+        Player player = Player.getPlayer();
         String text;
         switch (result) {
             case -1:
-                text = "You lose";
+                player.addGame(-50);
+                text = "You lose: -50";
                 break;
             case 1:
-                text = "You win";
+                player.addGame(100);
+                text = "You win: +100";
                 break;
             default:
                 text = "You tie";
@@ -84,8 +88,15 @@ public class GameFragment extends Fragment implements GameCallBack {
         if (currentToast != null) {
             currentToast.cancel();
         }
+        ((RPSActivity) getActivity()).updateLevelDisplay();
+
         currentToast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         currentToast.setGravity(Gravity.CENTER, 0, 0);
         currentToast.show();
+    }
+
+    public void recreateView() {
+        grid.setAdapter(new GameAdapter(game, this));
+        grid.invalidate();
     }
 }
