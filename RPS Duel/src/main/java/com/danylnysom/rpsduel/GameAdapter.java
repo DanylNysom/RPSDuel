@@ -1,4 +1,4 @@
-package com.example.rpsduel;
+package com.danylnysom.rpsduel;
 
 import android.database.DataSetObserver;
 import android.view.View;
@@ -7,10 +7,9 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 
 /**
- * Created by dylan on 3/12/14.
+ * Adapter for generating clickable items that the user can use to select a weapon.
  */
 public class GameAdapter implements ListAdapter {
-    private int weaponCount;
     private Game game;
     private GameCallBack myCallBack;
 

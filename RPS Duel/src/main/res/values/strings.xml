@@ -4,5 +4,7 @@
     <string name="app_name">RPS Duel</string>
     <string name="action_practice">Practice</string>
     <string name="action_duel">Duel</string>
+    <string name="action_stats">Stats</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

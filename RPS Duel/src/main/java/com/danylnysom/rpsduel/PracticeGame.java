@@ -1,9 +1,11 @@
-package com.example.rpsduel;
+package com.danylnysom.rpsduel;
 
 import java.util.Random;
 
 /**
- * Created by dylan on 3/12/14.
+ * An instance of a Game against a computer-controlled opponent.
+ * <p/>
+ * The opponent's weapons are randomly generated when getResult() is called.
  */
 public class PracticeGame extends Game {
     Random rand;

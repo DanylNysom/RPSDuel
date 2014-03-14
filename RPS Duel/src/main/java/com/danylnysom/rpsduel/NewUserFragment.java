@@ -1,9 +1,9 @@
-package com.example.rpsduel;
+package com.danylnysom.rpsduel;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -19,17 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Created by dylan on 3/11/14.
+ * A Fragment implementation to be displayed upon first run of the program, or when the user's data
+ * has been cleared.
+ *
+ * A textbox is provided for the user to enter a name, with an "OK" button to confirm.
  */
 public class NewUserFragment extends Fragment {
     String name = null;
-
-//      doesn't work...
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        getView().findViewById(R.id.name_box).requestFocus();
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,7 +33,7 @@ public class NewUserFragment extends Fragment {
         RelativeLayout view = (RelativeLayout) inflater.inflate(R.layout.fragment_newuser, null, false);
         final EditText textBox = (EditText) view.findViewById(R.id.name_box);
         final Button ok = (Button) view.findViewById(R.id.ok_button);
-        getActivity().getActionBar().hide();
+        ((RPSActivity) getActivity()).getSupportActionBar().hide();
         textBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -95,7 +91,7 @@ public class NewUserFragment extends Fragment {
 
     private void initializePlayer() {
         SharedPreferences.Editor editor = getActivity().getPreferences(Context.MODE_PRIVATE).edit();
-        editor.putString(RPSActivity.NAME_PREF, name);
+        editor.putString(Player.NAME, name);
         editor.commit();
     }
 }

@@ -1,7 +1,7 @@
-package com.example.rpsduel;
+package com.danylnysom.rpsduel;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Created by dylan on 3/11/14.
+ * A Fragment implementation representing a game against an arbitrary opponent type/connection.
  */
 public class GameFragment extends Fragment implements GameCallBack {
-    private final static String GAME_KEY = "game";
-    private final static String GAMETYPE_KEY = "type";
-    private final static String WEAPONCOUNT_KEY = "count";
-
     public static final int PRACTICE = 0;
     public static final int NFC = 1;
     public static final int BLUETOOTH = 2;
     public static final int WIFI = 3;
+    private final static String GAMETYPE_KEY = "type";
+    private final static String WEAPONCOUNT_KEY = "count";
     private static Toast currentToast = null;
 
     private Game game;

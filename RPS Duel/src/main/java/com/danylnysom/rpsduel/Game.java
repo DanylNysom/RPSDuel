@@ -1,19 +1,27 @@
-package com.example.rpsduel;
+package com.danylnysom.rpsduel;
 
 import android.widget.TextView;
 
 /**
- * Created by dylan on 3/12/14.
+ * Represents a single RPS match against an arbitrary opponent or opponents.
  */
 public abstract class Game {
     private static final String[] WEAPONS_3 = {"Rock", "Paper", "Scissors"};
+    private static final String[] WEAPONS_5 = {"Rock", "Scissors", "Lizard", "Paper", "Spock"};
+    private static final String[] WEAPONS_7 = {"Rock", "Water", "Air", "Paper",
+            "Sponge", "Scissors", "Fire"};
+    private static final String[] WEAPONS_9 = {"Rock", "Gun", "Water", "Air", "Paper",
+            "Sponge", "Human", "Scissors", "Fire"};
+    public static String[] weapons;
+    public static String[][] messages;
+    protected int playerChoice;
+    protected int opponentChoice;
+    protected int weaponCount;
     private String[][] MESSAGES_3 = {
             {"ties", "is covered by", "crushes"},
             {"covers", "ties", "is cut by"},
             {"are crushed by", "cut", "tie"}
     };
-
-    private static final String[] WEAPONS_5 = {"Rock", "Scissors", "Lizard", "Paper", "Spock"};
     private String[][] MESSAGES_5 = {
             {"ties", "crushes", "crushes", "is covered by", "is vaporized by"},
             {"are crushed by", "tie", "decapitate", "cut", "are smashed by"},
@@ -21,9 +29,6 @@ public abstract class Game {
             {"covers", "is cut by", "is eaten by", "ties", "disproves"},
             {"vaporizes", "smashes", "is poisoned by", "is disproved by", "ties"}
     };
-
-    private static final String[] WEAPONS_7 = {"Rock", "Water", "Air", "Paper",
-            "Sponge", "Scissors", "Fire"};
     private String[][] MESSAGES_7 = {
             {"ties", "is eroded by", "is eroded by", "is covered by", "crushes", "crushes", "pounds out"},
             {"erodes", "ties", "is evaporated by", "is floated on by", "is absorbed by", "rusts", "puts out"},
@@ -33,28 +38,17 @@ public abstract class Game {
             {"are crushed by", "are rusted by", "swish through", "cut", "cut", "tie", "are melted by"},
             {"is pounded out by", "is put out by", "is blown out by", "burns", "burns", "melts", "ties"}
     };
-
-    private static final String[] WEAPONS_9 = {"Rock", "Gun", "Water", "Air", "Paper",
-            "Sponge", "Human", "Scissors", "Fire"};
     private String[][] MESSAGES_9 = {
             {"ties", "is targeted by", "is eroded by", "is eroded by", "is covered by", "crushes", "crushes", "crushes", "pounds out"},
             {"targets", "ties", "is rusted by", "is tarnished by", "is outlawed by", "is cleaned by", "shoots", "outclasses", "\'fires\'"},
             {"erodes", "rusts", "ties", "is evaporated by", "is floated on by", "is absorbed by", "is drunk by", "rusts", "puts out"},
-            {"erodes", "tarnish", "evaporates", "ties", "is fanned by", "has pockets used by", "is breathed by", "is swished through by", "blows out"},
+            {"erodes", "tarnishes", "evaporates", "ties", "is fanned by", "has pockets used by", "is breathed by", "is swished through by", "blows out"},
             {"covers", "outlaws", "floats on", "fans", "ties", "is soaked by", "is written by", "is cut by", "is burned by"},
             {"is crushed by", "cleans", "absorbs", "uses pockets of", "soaks", "ties", "is used to clean by", "is cut by", "is burned by"},
             {"is crushed by", "is shot by", "drinks", "breathes", "writes", "cleans with", "ties", "is cut by", "is burned by"},
             {"are crushed by", "are outclassed by", "are rusted by", "swish through", "cut", "cut", "cut", "tie", "are melted by"},
             {"is pounded out by", "is \'fire\'d by", "is put out by", "is blown out by", "burns", "burns", "burns", "melts", "ties"}
     };
-
-    public static String[] weapons;
-    public static String[][] messages;
-
-    protected int playerChoice;
-    protected int opponentChoice;
-    protected int weaponCount;
-
 
     public Game(int weaponSetSize) {
         playerChoice = -1;

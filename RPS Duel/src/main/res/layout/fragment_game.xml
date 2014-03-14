@@ -5,39 +5,39 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/playerChoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:id="@+id/playerChoice" />
+        android:layout_alignParentTop="true"
+        android:textAppearance="@android:style/TextAppearance.Large" />
 
     <TextView
+        android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:id="@+id/message" />
+        android:textAppearance="@android:style/TextAppearance.Large" />
 
     <TextView
+        android:id="@+id/opponentChoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:id="@+id/opponentChoice" />
+        android:layout_alignParentTop="true"
+        android:textAppearance="@android:style/TextAppearance.Large" />
 
     <GridView
+        android:id="@+id/weapon_grid"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/playerChoice"
         android:layout_alignParentBottom="true"
-        android:numColumns="auto_fit"
+        android:layout_below="@id/playerChoice"
         android:columnWidth="95dp"
-        android:verticalSpacing="10dp"
+        android:gravity="fill_vertical"
+        android:numColumns="auto_fit"
         android:stretchMode="spacingWidthUniform"
-        android:gravity="center"
-        android:id="@+id/weapon_grid"></GridView>
+        android:verticalSpacing="10dp" />
 
 </RelativeLayout>
