@@ -3,7 +3,6 @@ package com.danylnysom.rpsduel;
 import android.content.SharedPreferences;
 
 import java.util.Calendar;
-import java.util.HashSet;
 
 /**
  * Represents the "logged-in" player.
@@ -20,24 +19,20 @@ public class Player {
 
     private static Player singleton = null;
 
-    private boolean initialized;
     private String name;
     private long day;
     private int gameTotal;
     private int gamesToday;
     private int points;
     private int wins;
-    private HashSet<String> opponents;
 
     private Player() {
-        initialized = false;
         name = null;
         gameTotal = 0;
         gamesToday = 0;
         points = 0;
         wins = 0;
         day = 0;
-        opponents = null;
     }
 
     public static Player getPlayer() {
@@ -62,7 +57,6 @@ public class Player {
         } else {
             gamesToday = prefs.getInt(GAMES_TODAY, 0);
         }
-        initialized = true;
     }
 
     public String getName() {
@@ -111,5 +105,12 @@ public class Player {
         editor.putInt(WINS, wins);
         editor.putLong(DAY, day);
         editor.apply();
+    }
+
+    public void addPoints(int newPoints) {
+        points += newPoints;
+        if (points < 0) {
+            points = 0;
+        }
     }
 }

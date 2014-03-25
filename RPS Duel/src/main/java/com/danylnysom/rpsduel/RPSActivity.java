@@ -1,21 +1,26 @@
 package com.danylnysom.rpsduel;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class RPSActivity extends ActionBarActivity {
 
+    private ViewGroup contentView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Player player = Player.getPlayer();
-        setContentView(R.layout.activity_rps);
+        contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_rps, null);
+        setContentView(contentView);
         player.initialize(getPreferences(MODE_PRIVATE));
 
         String name = player.getName();
@@ -41,18 +46,26 @@ public class RPSActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == R.id.action_practice) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.frame, GameFragment.newInstance(9, GameFragment.PRACTICE));
-            ft.commit();
-            return true;
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        switch (item.getItemId()) {
+            case R.id.action_practice:
+                contentView.removeAllViews();
+                ft.replace(R.id.frame, GameFragment.newInstance(Game.CONNECTION_TYPE.PRACTICE));
+                ft.commit();
+                return true;
+            case R.id.action_duel:
+                contentView.removeAllViews();
+                ft.replace(R.id.frame, GameFragment.newInstance(Game.CONNECTION_TYPE.BLUETOOTH));
+                ft.commit();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         Player.getPlayer().saveChanges(getPreferences(MODE_PRIVATE));
     }
 
@@ -63,14 +76,15 @@ public class RPSActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         RelativeLayout view = (RelativeLayout) getLayoutInflater().inflate(R.layout.actionbar, null);
         ((TextView) view.findViewById(R.id.name)).setText(name);
-        ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(Player.getPlayer().getStat(Player.LEVEL)));
         actionBar.setCustomView(view);
         actionBar.setDisplayShowCustomEnabled(true);
+        updateLevelDisplay();
         actionBar.show();
     }
 
     public void updateLevelDisplay() {
         RelativeLayout view = (RelativeLayout) getSupportActionBar().getCustomView();
+        ((TextView) view.findViewById(R.id.points)).setText(String.valueOf(Player.getPlayer().getStat(Player.POINTS)));
         ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(Player.getPlayer().getStat(Player.LEVEL)));
     }
 }

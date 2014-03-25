@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -19,7 +20,6 @@ public abstract class Game {
     public static final String RPS_7 = "RPS 7";
     public static final String RPS_9 = "RPS 9";
     public final static String[] sets = {RPS_3, RPS_5, RPS_7, RPS_9};
-
     private static final String[] WEAPONS_3 = {"Rock", "Paper", "Scissors"};
     private static final String[] WEAPONS_5 = {"Rock", "Scissors", "Lizard", "Paper", "Spock"};
     private static final String[] WEAPONS_7 = {"Rock", "Water", "Air", "Paper",
@@ -63,10 +63,9 @@ public abstract class Game {
             {"are crushed by", "are outclassed by", "are rusted by", "swish through", "cut", "cut", "cut", "tie", "are melted by"},
             {"is pounded out by", "is \'fire\'d by", "is put out by", "is blown out by", "burns", "burns", "burns", "melts", "ties"}
     };
-
     private GameFragment fragment;
 
-    public Game(Context context, GameFragment fragment) {
+    public Game(GameFragment fragment) {
         playerChoice = -1;
         opponentChoice = -1;
         this.fragment = fragment;
@@ -104,8 +103,27 @@ public abstract class Game {
                 weaponCount = weapons.length;
                 fragment.recreateView();
             }
-        }).setCancelable(false);
+        });
+        alert.setOnCancelListener(new AlertDialog.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                weapons = WEAPONS_3;
+                messages = MESSAGES_3;
+                weaponCount = weapons.length;
+                fragment.recreateView();
+            }
+        });
         alert.show();
+    }
+
+    protected int getWinStatus() {
+        if (playerChoice == opponentChoice) {
+            return 0;
+        } else if (((playerChoice - opponentChoice + weaponCount) % weaponCount) <= weaponCount / 2) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     public void setPlayerChoice(int choice) {
@@ -116,9 +134,19 @@ public abstract class Game {
         if (playerChoice == -1 || opponentChoice == -1) {
             return false;
         }
+        int color = Color.GRAY;
+        switch (getWinStatus()) {
+            case -1:
+                color = Color.RED;
+                break;
+            case 1:
+                color = Color.GREEN;
+                break;
+        }
         playerView.setText(weapons[playerChoice]);
         opponentView.setText(weapons[opponentChoice]);
         messageView.setText(getMessage());
+        messageView.setTextColor(color);
         return true;
     }
 
@@ -135,6 +163,13 @@ public abstract class Game {
     }
 
     public abstract int getResult();
+
+    public static enum CONNECTION_TYPE {
+        PRACTICE,
+        NFC,
+        BLUETOOTH,
+        WIFI
+    }
 
     protected class WeaponListAdapter implements ListAdapter {
         @Override
@@ -186,6 +221,9 @@ public abstract class Game {
             view.setText(sets[position]);
             view.setHeight(180);
             view.setTextAppearance(view.getContext(), R.style.TextAppearance_AppCompat_Widget_PopupMenu_Large);
+            if (!isEnabled(position)) {
+                view.setTextColor(Color.DKGRAY);
+            }
             return view;
         }
 

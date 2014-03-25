@@ -13,7 +13,7 @@ public class PracticeGame extends Game {
     Random rand;
 
     public PracticeGame(Context context, GameFragment fragment) {
-        super(context, fragment);
+        super(fragment);
         showWeaponSetPopup(context);
         rand = new Random(System.currentTimeMillis());
     }
@@ -21,12 +21,17 @@ public class PracticeGame extends Game {
     @Override
     public int getResult() {
         opponentChoice = rand.nextInt(weaponCount);
-        if (playerChoice == opponentChoice) {
-            return 0;
-        } else if (((playerChoice - opponentChoice + weaponCount) % weaponCount) <= weaponCount / 2) {
-            return 1;
-        } else {
-            return -1;
+
+        int result = getWinStatus();
+
+        switch (result) {
+            case -1:
+                Player.getPlayer().addPoints(-50);
+                break;
+            case 1:
+                Player.getPlayer().addPoints(200);
         }
+
+        return result;
     }
 }
