@@ -19,15 +19,17 @@ public abstract class Game {
     public static final String RPS_5 = "Lizard Spock";
     public static final String RPS_7 = "RPS 7";
     public static final String RPS_9 = "RPS 9";
-    public final static String[] sets = {RPS_3, RPS_5, RPS_7, RPS_9};
+    public static final String JABBERWOCKY = "The Jabberwocky";
+    public static final String[] sets = {RPS_3, RPS_5, RPS_7, RPS_9, JABBERWOCKY};
     private static final String[] WEAPONS_3 = {"Rock", "Paper", "Scissors"};
-    private static final String[] WEAPONS_5 = {"Rock", "Scissors", "Lizard", "Paper", "Spock"};
+    private static final String[] WEAPONS_5 = {"Rock", "Spock", "Paper", "Lizard", "Scissors"};
     private static final String[] WEAPONS_7 = {"Rock", "Water", "Air", "Paper",
             "Sponge", "Scissors", "Fire"};
     private static final String[] WEAPONS_9 = {"Rock", "Gun", "Water", "Air", "Paper",
             "Sponge", "Human", "Scissors", "Fire"};
-    public static String[] weapons;
-    public static String[][] messages;
+    private static final String[] WEAPONS_JABBERWOCKY = {"Jabberwock", "Vorpal Sword", "Boy"};
+    public String[] weapons;
+    public String[][] messages;
     protected int playerChoice;
     protected int opponentChoice;
     protected int weaponCount;
@@ -37,11 +39,11 @@ public abstract class Game {
             {"are crushed by", "cut", "tie"}
     };
     private String[][] MESSAGES_5 = {
-            {"ties", "crushes", "crushes", "is covered by", "is vaporized by"},
-            {"are crushed by", "tie", "decapitate", "cut", "are smashed by"},
-            {"is crushed by", "is decapitated by", "ties", "eats", "poisons"},
-            {"covers", "is cut by", "is eaten by", "ties", "disproves"},
-            {"vaporizes", "smashes", "is poisoned by", "is disproved by", "ties"}
+            {"ties", "is vaporized by", "is covered by", "crushes", "crushes"},
+            {"vaporizes", "ties", "is disproved by", "is poisoned by", "smashes"},
+            {"covers", "disproves", "ties", "is eaten by", "is cut by"},
+            {"is crushed by", "poisons", "eats", "is decapitated by"},
+            {"are crushed by", "are smashed by", "cut", "decapitate", "tie"}
     };
     private String[][] MESSAGES_7 = {
             {"ties", "is eroded by", "is eroded by", "is covered by", "crushes", "crushes", "pounds out"},
@@ -62,6 +64,11 @@ public abstract class Game {
             {"is crushed by", "is shot by", "drinks", "breathes", "writes", "cleans with", "ties", "is cut by", "is burned by"},
             {"are crushed by", "are outclassed by", "are rusted by", "swish through", "cut", "cut", "cut", "tie", "are melted by"},
             {"is pounded out by", "is \'fire\'d by", "is put out by", "is blown out by", "burns", "burns", "burns", "melts", "ties"}
+    };
+    private String[][] MESSAGES_JABBERWOCKY = {
+            {"ties", "is decapitated by", "eats"},
+            {"decapitates", "ties", "is handled by"},
+            {"is eaten by", "handles", "ties"}
     };
     private GameFragment fragment;
 
@@ -94,6 +101,10 @@ public abstract class Game {
                     case 3:
                         weapons = WEAPONS_9;
                         messages = MESSAGES_9;
+                        break;
+                    case 4:
+                        weapons = WEAPONS_JABBERWOCKY;
+                        messages = MESSAGES_JABBERWOCKY;
                         break;
                     default:
                         weapons = WEAPONS_3;

@@ -42,7 +42,7 @@ public class GameFragment extends Fragment implements GameCallBack {
             case NFC:
                 break;
             case BLUETOOTH:
-                game = new BluetoothGame(getActivity(), this);
+                game = new BluetoothGame(this);
             case WIFI:
                 break;
             default:
