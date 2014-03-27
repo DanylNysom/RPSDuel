@@ -1,4 +1,4 @@
-package com.danylnysom.rpsduel;
+package com.danylnysom.rpsduel.player;
 
 import android.content.SharedPreferences;
 
@@ -19,7 +19,7 @@ public class Player {
 
     private static Player singleton = null;
 
-    private String name;
+    private String name = null;
     private long day;
     private int gameTotal;
     private int gamesToday;
@@ -27,7 +27,6 @@ public class Player {
     private int wins;
 
     private Player() {
-        name = null;
         gameTotal = 0;
         gamesToday = 0;
         points = 0;
@@ -35,6 +34,13 @@ public class Player {
         day = 0;
     }
 
+    /**
+     * Gets the singleton instance of this class.
+     * <p/>
+     * One will be created if it doesn't already exist.
+     *
+     * @return the singleton instance of this class. Didn't I say that already?
+     */
     public static Player getPlayer() {
         if (singleton == null) {
             singleton = new Player();
@@ -42,6 +48,13 @@ public class Player {
         return singleton;
     }
 
+    /**
+     * Set the values of the singleton instance to the ones stored in the provided SharedPreferences.
+     * <p/>
+     * Anything not stored in the preferences will be set to 0 or null, whichever is applicable.
+     *
+     * @param prefs the preferences object containing data about the player
+     */
     public void initialize(SharedPreferences prefs) {
         name = prefs.getString(NAME, null);
         gameTotal = prefs.getInt(GAMES, 0);
@@ -59,14 +72,30 @@ public class Player {
         }
     }
 
+    /**
+     * Return's the players name.
+     *
+     * @return the player's name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set's the players name
+     *
+     * @param value the new name of the player
+     */
     public void setName(String value) {
         name = value;
     }
 
+    /**
+     * Gets a stat for the player.
+     *
+     * @param key   the key (GAMES, LEVEL, WINS...) for the requested stat
+     * @return the current value of the requested stat
+     */
     public int getStat(String key) {
         switch (key) {
             case GAMES:
@@ -74,7 +103,7 @@ public class Player {
             case GAMES_TODAY:
                 return 5;
             case LEVEL:
-                return (points > 0) ? (int) (Math.log(points / 100)) : 0;
+                return (points >= 1000) ? (int) (Math.log(points / 1000) / Math.log(2)) + 1: 0;
             case LOSSES:
                 return gameTotal - wins;
             case POINTS:
@@ -86,16 +115,28 @@ public class Player {
         }
     }
 
-    public int addGame(int receivedPoints) {
+    /**
+     * Adds a game to this player's stats.
+     * <p/>
+     * The total number of games and total games today will be incremented. If receivedPoints is
+     * positive, a win will also be added.
+     *
+     * @param receivedPoints the number of points received from the game - can be negative
+     */
+    public void addGame(int receivedPoints) {
         if (points > 0) {
             wins++;
         }
         gameTotal++;
         gamesToday++;
-        points += receivedPoints;
-        return points;
+        addPoints(receivedPoints);
     }
 
+    /**
+     * Stores the current stats into the SharedPreferences.
+     *
+     * @param prefs the SharedPreferences instance to store the current stats into.
+     */
     public void saveChanges(SharedPreferences prefs) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(GAMES, gameTotal);
@@ -107,6 +148,13 @@ public class Player {
         editor.apply();
     }
 
+    /**
+     * Adds points to the player's total.
+     *
+     * If the total becomes negative, it will be set to 0.
+     *
+     * @param newPoints the number of points to add - can be negative
+     */
     public void addPoints(int newPoints) {
         points += newPoints;
         if (points < 0) {

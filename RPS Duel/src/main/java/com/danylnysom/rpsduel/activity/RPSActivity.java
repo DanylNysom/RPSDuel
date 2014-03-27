@@ -1,4 +1,4 @@
-package com.danylnysom.rpsduel;
+package com.danylnysom.rpsduel.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,10 +11,25 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class RPSActivity extends ActionBarActivity {
+import com.danylnysom.rpsduel.R;
+import com.danylnysom.rpsduel.fragment.GameFragment;
+import com.danylnysom.rpsduel.fragment.NewUserFragment;
+import com.danylnysom.rpsduel.game.Game;
+import com.danylnysom.rpsduel.player.Player;
 
+/**
+ * The entry point to all things RPS Duel.
+ */
+public class RPSActivity extends ActionBarActivity implements ActionbarCallback {
     private ViewGroup contentView;
 
+    /**
+     * Sets everything up. If this is the first time the user has run this app, or if they have
+     * cleared their data, a NewUserFragment will be shown so that the user can enter a name.
+     * Otherwise a StatsFragment will be displayed.
+     *
+     * @param savedInstanceState is not used here - yet, at least
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,18 +49,30 @@ public class RPSActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Initializes the options menu, of course.
+     *
+     * @param menu the menu to inflate the menu into
+     * @return true, unless the sun has exploded
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    /**
+     * Deals with a selection of a menu item. What happens depends on the item that was selected:
+     * <p/>
+     * Practice:    starts a new PracticeGame
+     * Duel:        starts a new DuelGame
+     * (other):     returns false
+     *
+     * @param item the item that was selected
+     * @return true if the item was added to the menu by this activity, and was handled
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         switch (item.getItemId()) {
@@ -63,28 +90,44 @@ public class RPSActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Saves the changes to the player by calling Player.saveChanges(SharedPreferences).
+     */
     @Override
     protected void onPause() {
         super.onPause();
         Player.getPlayer().saveChanges(getPreferences(MODE_PRIVATE));
     }
 
+    /**
+     * Sets up the action bar.
+     * <p/>
+     * Removes the home button and title. Sets the view to the actionbar.xml layout, and sets the
+     * player's name, level, and points in the view.
+     */
     public void initializeActionBar() {
         String name = Player.getPlayer().getName();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         RelativeLayout view = (RelativeLayout) getLayoutInflater().inflate(R.layout.actionbar, null);
-        ((TextView) view.findViewById(R.id.name)).setText(name);
-        actionBar.setCustomView(view);
-        actionBar.setDisplayShowCustomEnabled(true);
+        if (view != null) {
+            ((TextView) view.findViewById(R.id.name)).setText(name);
+            actionBar.setCustomView(view);
+            actionBar.setDisplayShowCustomEnabled(true);
+        }
         updateLevelDisplay();
         actionBar.show();
     }
 
+    /**
+     * Updates the points and level displays in the actionbar to their current values.
+     */
+    @Override
     public void updateLevelDisplay() {
         RelativeLayout view = (RelativeLayout) getSupportActionBar().getCustomView();
-        ((TextView) view.findViewById(R.id.points)).setText(String.valueOf(Player.getPlayer().getStat(Player.POINTS)));
-        ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(Player.getPlayer().getStat(Player.LEVEL)));
+        Player player = Player.getPlayer();
+        ((TextView) view.findViewById(R.id.points)).setText(String.valueOf(player.getStat(Player.POINTS)));
+        ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(player.getStat(Player.LEVEL)));
     }
 }
