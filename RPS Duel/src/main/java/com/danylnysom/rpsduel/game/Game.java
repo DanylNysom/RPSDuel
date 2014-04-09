@@ -41,7 +41,7 @@ public abstract class Game {
             {"ties", "is vaporized by", "is covered by", "crushes", "crushes"},
             {"vaporizes", "ties", "is disproved by", "is poisoned by", "smashes"},
             {"covers", "disproves", "ties", "is eaten by", "is cut by"},
-            {"is crushed by", "poisons", "eats", "is decapitated by"},
+            {"is crushed by", "poisons", "eats", "ties", "is decapitated by"},
             {"are crushed by", "are smashed by", "cut", "decapitate", "tie"}
     };
     private final String[][] MESSAGES_7 = {
