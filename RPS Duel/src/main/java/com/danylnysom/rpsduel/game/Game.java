@@ -32,6 +32,7 @@ public abstract class Game {
     private static final String[] WEAPONS_9 = {"Rock", "Gun", "Water", "Air", "Paper",
             "Sponge", "Human", "Scissors", "Fire"};
     private static final String[] WEAPONS_JABBERWOCKY = {"Jabberwock", "Vorpal Sword", "Boy"};
+    final GameFragment fragment;
     private final String[][] MESSAGES_3 = {
             {"ties", "is covered by", "crushes"},
             {"covers", "ties", "is cut by"},
@@ -69,12 +70,11 @@ public abstract class Game {
             {"decapitates", "ties", "is handled by"},
             {"is eaten by", "handles", "ties"}
     };
-    private final GameFragment fragment;
+    int playerChoice;
     int opponentChoice;
     int weaponCount;
     private String[] weapons;
     private String[][] messages;
-    private int playerChoice;
 
     Game(GameFragment fragment) {
         playerChoice = -1;
@@ -218,6 +218,18 @@ public abstract class Game {
 
     public abstract void getResult();
 
+    /**
+     * Chooses a weapon set when there are multiple players. Always chooses the time-tested
+     * traditional RPS. This will be changed in the future, otherwise I won't even bother playing
+     * RPS Duel.
+     */
+    public void setMultiplayerWeaponSet() {
+        weapons = WEAPONS_3;
+        messages = MESSAGES_3;
+        weaponCount = weapons.length;
+        fragment.recreateView();
+    }
+
     public static enum CONNECTION_TYPE {
         PRACTICE,
         NFC,
@@ -227,6 +239,8 @@ public abstract class Game {
 
     /**
      * A ListAdapter implementation to be used to display all of the available weapon sets.
+     * <p/>
+     * If you want to learn more about this class's functions, don't read the JavaDoc. It's useless.
      */
     class WeaponListAdapter implements ListAdapter {
         private static final int WEAPONLIST_ROW_HEIGHT = 180;
@@ -314,6 +328,14 @@ public abstract class Game {
             return true;
         }
 
+        /**
+         * Returns a TextView which contains the name of the weaponset at the specified index.
+         *
+         * @param position    the index of tehe weapon set to represent
+         * @param convertView as usual
+         * @param parent      I guess this is probably the ListView?
+         * @return a TextView
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView view = (TextView) convertView;
@@ -323,6 +345,7 @@ public abstract class Game {
             view.setText(sets[position]);
             view.setHeight(WEAPONLIST_ROW_HEIGHT);
             view.setTextAppearance(fragment.getActivity(), R.style.TextAppearance_AppCompat_Widget_PopupMenu_Large);
+            view.setBackgroundColor(Color.BLACK);
             if (!isEnabled(position)) {
                 view.setTextColor(Color.DKGRAY);
             }

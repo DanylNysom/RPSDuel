@@ -7,7 +7,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -129,5 +131,22 @@ public class RPSActivity extends ActionBarActivity implements ActionbarCallback 
         Player player = Player.getPlayer();
         ((TextView) view.findViewById(R.id.points)).setText(String.valueOf(player.getStat(Player.POINTS)));
         ((TextView) view.findViewById(R.id.level)).setText(String.valueOf(player.getStat(Player.LEVEL)));
+    }
+
+    /**
+     * Supposedly displays a fun spinning progress indicate for when background operations are
+     * being performed. It doesn't seem to work. Actually I think it works, but I'm not calling it
+     * where I should be.
+     *
+     * @param doShow true if the indicator should be displayed; false if it should be hidden
+     */
+    public void showProgressIndicator(boolean doShow) {
+        RelativeLayout view = (RelativeLayout) getSupportActionBar().getCustomView();
+        ProgressBar indicator = (ProgressBar) view.findViewById(R.id.progressIndicator);
+        if (doShow) {
+            indicator.setVisibility(View.VISIBLE);
+        } else {
+            indicator.setVisibility(View.INVISIBLE);
+        }
     }
 }

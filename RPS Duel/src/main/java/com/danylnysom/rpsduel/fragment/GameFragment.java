@@ -37,6 +37,7 @@ public class GameFragment extends Fragment implements GameCallBack {
         Bundle args = new Bundle();
         args.putString(GAMETYPE_KEY, type.toString());
         gf.setArguments(args);
+        gf.setRetainInstance(true);
         return gf;
     }
 
@@ -59,6 +60,7 @@ public class GameFragment extends Fragment implements GameCallBack {
                 break;
             case BLUETOOTH:
                 game = new BluetoothGame(this);
+                break;
             case WIFI:
                 break;
             default:
@@ -107,6 +109,13 @@ public class GameFragment extends Fragment implements GameCallBack {
         game.displayResultMessage(playerMessage, message, opponentMessage);
 
         ((ActionbarCallback) getActivity()).updateLevelDisplay();
+    }
+
+    /**
+     * Makes the weapon grid disappear before your very eyes - poof!
+     */
+    public void hideGrid() {
+        grid.setVisibility(View.INVISIBLE);
     }
 
     /**

@@ -1,6 +1,9 @@
-package com.danylnysom.rpsduel.game;
+package com.danylnysom.rpsduel.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -8,6 +11,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -21,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.danylnysom.rpsduel.R;
+import com.danylnysom.rpsduel.game.BluetoothGame;
 import com.danylnysom.rpsduel.player.Player;
 
 import java.io.IOException;
@@ -31,20 +36,43 @@ import java.util.UUID;
  * A fragment used for finding an opponent to connect with via bluetooth. Shows a list of nearby
  * discoverable bluetooth devices, allowing the user to select one to initiate a game.
  */
-class BluetoothOpponentFinderFragment extends Fragment {
+public class BluetoothOpponentFinderFragment extends Fragment {
     private static final String SERVER_NAME = "rpsduel";
     private static final String SERVER_UUID = "03579bd0-80c4-418f-a2c5-424f7733bf6e";
     private static final int DISCOVER_REQUEST_CODE = 16234;
     private static final int POPUP_DURATION = 60;
+    private static final int CONFIRM = 111;
 
     private String originalName = null;
-    private boolean initiated = false;
     private ArrayAdapter<String> opponentsAdapter;
     private BluetoothAdapter btadapter;
     private BluetoothServerSocket server;
     private BluetoothSocket socket;
     private BroadcastReceiver receiver = null;
     private AcceptThread serverThread = null;
+    private Context context = null;
+    private BluetoothGame game = null;
+    private ProgressDialog progress = null;
+    private int confirmation = -1;
+
+    /**
+     * Overridden to force usage of the newInstance() method.
+     */
+    private BluetoothOpponentFinderFragment() {
+        super();
+    }
+
+    /**
+     * Creates a new BluetoothOpponentFinderFragment instance.
+     *
+     * @return a new BluetoothOpponentFinderFragment
+     */
+    public static BluetoothOpponentFinderFragment newInstance(BluetoothGame game) {
+        BluetoothOpponentFinderFragment boff = new BluetoothOpponentFinderFragment();
+        boff.setRetainInstance(true);
+        boff.game = game;
+        return boff;
+    }
 
     /**
      * Sets up the view to be ready for when other devices are discovered. Uses the
@@ -58,6 +86,7 @@ class BluetoothOpponentFinderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        context = inflater.getContext();
         ListView list = (ListView) inflater.inflate(R.layout.fragment_opponentfinder, null, false);
         opponentsAdapter = new ArrayAdapter<>(inflater.getContext(), android.R.layout.simple_list_item_1, new ArrayList<String>());
         if (list != null) {
@@ -66,21 +95,31 @@ class BluetoothOpponentFinderFragment extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     btadapter.cancelDiscovery();
+
                     if (serverThread != null) {
                         serverThread.cancel();
                     }
                     String deviceString = opponentsAdapter.getItem(position);
-                    String address = deviceString.replaceFirst("^.*\n", "");
+                    final String[] opponent = deviceString.split("\n");
+                    new RequestConnectionThread(opponent).start();
 
-                    BluetoothSocket tmp = null;
-                    BluetoothDevice target = btadapter.getRemoteDevice(address);
-                    try {
-                        tmp = target.createRfcommSocketToServiceRecord(UUID.fromString(SERVER_UUID));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    socket = tmp;
-                    connectionMade();
+                    progress = new ProgressDialog(parent.getContext(), ProgressDialog.STYLE_SPINNER);
+                    progress.setTitle("Waiting for confirmation");
+                    progress.setOnDismissListener(new Dialog.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            if (confirmation == CONFIRM) {
+                                connectionMade(opponent[0]);
+                            } else {
+                                try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                    progress.show();
                 }
             });
         }
@@ -93,8 +132,8 @@ class BluetoothOpponentFinderFragment extends Fragment {
      * starts searching for other devices.
      */
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
             btadapter = ((BluetoothManager) getActivity().getSystemService(Activity.BLUETOOTH_SERVICE)).getAdapter();
@@ -106,6 +145,8 @@ class BluetoothOpponentFinderFragment extends Fragment {
             originalName = btadapter.getName();
         }
 
+        btadapter.cancelDiscovery();
+
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -114,6 +155,7 @@ class BluetoothOpponentFinderFragment extends Fragment {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     if (device != null) {
                         opponentsAdapter.add(device.getName() + "\n" + device.getAddress());
+                        opponentsAdapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -148,7 +190,7 @@ class BluetoothOpponentFinderFragment extends Fragment {
             case DISCOVER_REQUEST_CODE:
                 if (resultCode != Activity.RESULT_CANCELED) {
                     /* Start serversocket to accept connections */
-                    serverThread = new AcceptThread();
+                    serverThread = new AcceptThread(getActivity());
                     serverThread.start();
                 }
         }
@@ -175,7 +217,9 @@ class BluetoothOpponentFinderFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        btadapter.setName(originalName);
+        if (originalName != null) {
+            btadapter.setName(originalName);
+        }
     }
 
     /**
@@ -202,7 +246,10 @@ class BluetoothOpponentFinderFragment extends Fragment {
     /**
      * A connection has been made, so start the game!
      */
-    void connectionMade() {
+    void connectionMade(String opponent) {
+        game.setSocketStreams(socket);
+        game.setMultiplayerWeaponSet();
+        getFragmentManager().popBackStackImmediate();
     }
 
     /**
@@ -210,12 +257,18 @@ class BluetoothOpponentFinderFragment extends Fragment {
      */
     private class AcceptThread extends Thread {
         /**
+         * Needed for UI operations
+         */
+        private Activity activity;
+
+        /**
          * Open a BluetoothServerSocket and reference it by the server field.
          */
-        public AcceptThread() {
+        public AcceptThread(Activity activity) {
+            this.activity = activity;
             BluetoothServerSocket tmp = null;
             try {
-                tmp = btadapter.listenUsingRfcommWithServiceRecord(SERVER_NAME, UUID.fromString(SERVER_UUID));
+                tmp = btadapter.listenUsingInsecureRfcommWithServiceRecord(SERVER_NAME, UUID.fromString(SERVER_UUID));
             } catch (IOException e) {
                 System.err.println("server didn't open???");
             }
@@ -229,23 +282,78 @@ class BluetoothOpponentFinderFragment extends Fragment {
          * server.
          */
         public void run() {
-            while (socket != null) {
+            while (socket == null) {
                 try {
                     socket = server.accept();
+                    btadapter.cancelDiscovery();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead = socket.getInputStream().read(buffer);
+                    String name = new String(buffer, 0, bytesRead);
+                    processIncomingRequest(name);
                 } catch (IOException e) {
-                    break;
-                }
-                if (socket != null) {
-                    try {
-                        initiated = true;
-                        server.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    connectionMade();
+                    socket = null;
                     break;
                 }
             }
+        }
+
+        /**
+         * Tells the user that an opponent wants to duel, asks if they want to duel said opponent,
+         * and lets them choose.
+         * <p/>
+         * If they want to duel a game is started, otherwise the BluetoothSocket is closed so a new
+         * opponent can request a duel.
+         *
+         * @param name the name of the opponent
+         */
+        private void processIncomingRequest(final String name) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog dialog = new AlertDialog.Builder(context)
+                            .setMessage("Opponent " + name + " wants to duel")
+                            .setOnCancelListener(new AlertDialog.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    try {
+                                        socket.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    socket = null;
+                                }
+                            })
+                            .setPositiveButton("Duel!", new AlertDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (which == AlertDialog.BUTTON_POSITIVE) {
+                                        try {
+                                            socket.getOutputStream().write(CONFIRM);
+                                            server.close();
+                                            connectionMade(name);
+                                        } catch (IOException e) {
+
+                                        }
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Reject", new AlertDialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (which != AlertDialog.BUTTON_POSITIVE) {
+                                        try {
+                                            socket.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        socket = null;
+                                    }
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                }
+            });
         }
 
         /**
@@ -254,6 +362,43 @@ class BluetoothOpponentFinderFragment extends Fragment {
         public void cancel() {
             try {
                 server.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * A thread for requesting a duel.
+     * <p/>
+     * Basically just waits for a response from the target opponent. If this weren't its own thread
+     * the GUI would lock up, which is functionality that was voted against at our last Round Table.
+     */
+    private class RequestConnectionThread extends Thread {
+        private String name;
+        private String address;
+
+        public RequestConnectionThread(String[] opponent) {
+            name = opponent[0];//deviceString.replaceFirst("^.*\n", "");
+            address = opponent[1];
+        }
+
+        public void run() {
+            BluetoothSocket tmp;
+            BluetoothDevice target = btadapter.getRemoteDevice(address);
+
+            try {
+                tmp = target.createInsecureRfcommSocketToServiceRecord(UUID.fromString(SERVER_UUID));
+                tmp.connect();
+                socket = tmp;
+                Player player = Player.getPlayer();
+                byte[] connectMessage = (player.getName() + " (" + player.getStat(Player.LEVEL) + ")").getBytes();
+                socket.getOutputStream().write(connectMessage);
+                confirmation = socket.getInputStream().read();
+                if (progress != null) {
+                    progress.dismiss();
+                    progress = null;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

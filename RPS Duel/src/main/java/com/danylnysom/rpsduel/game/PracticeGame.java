@@ -44,10 +44,10 @@ public class PracticeGame extends Game {
 
         switch (result) {
             case -1:
-                player.addGame(LOSS_POINTS);
+                player.addGame(LOSS_POINTS, fragment.getActivity());
                 break;
             case 1:
-                player.addGame(WIN_POINTS);
+                player.addGame(WIN_POINTS, fragment.getActivity());
         }
     }
 }

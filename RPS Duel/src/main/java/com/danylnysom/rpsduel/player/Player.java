@@ -1,6 +1,9 @@
 package com.danylnysom.rpsduel.player;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -25,6 +28,12 @@ public class Player {
     private int gamesToday;
     private int points;
     private int wins;
+
+    /**
+     * So that we can cancel before starting a new one, to avoid having awkwardly long stacks of
+     * them.
+     */
+    private Toast currentToast = null;
 
     private Player() {
         gameTotal = 0;
@@ -93,7 +102,7 @@ public class Player {
     /**
      * Gets a stat for the player.
      *
-     * @param key   the key (GAMES, LEVEL, WINS...) for the requested stat
+     * @param key the key (GAMES, LEVEL, WINS...) for the requested stat
      * @return the current value of the requested stat
      */
     public int getStat(String key) {
@@ -103,7 +112,7 @@ public class Player {
             case GAMES_TODAY:
                 return 5;
             case LEVEL:
-                return (points >= 1000) ? (int) (Math.log(points / 1000) / Math.log(2)) + 1: 0;
+                return (points >= 1000) ? (int) (Math.log(points / 1000) / Math.log(2)) + 1 : 0;
             case LOSSES:
                 return gameTotal - wins;
             case POINTS:
@@ -123,13 +132,27 @@ public class Player {
      *
      * @param receivedPoints the number of points received from the game - can be negative
      */
-    public void addGame(int receivedPoints) {
-        if (points > 0) {
+    public void addGame(int receivedPoints, Context context) {
+        StringBuilder builder = new StringBuilder();
+        if (receivedPoints > 0) {
             wins++;
+            builder.append('+');
         }
+        builder.append(receivedPoints);
         gameTotal++;
         gamesToday++;
         addPoints(receivedPoints);
+
+        if (receivedPoints != 0) {
+            if (currentToast != null) {
+                currentToast.cancel();
+                currentToast.setText(builder.toString());
+            } else {
+                currentToast = Toast.makeText(context, builder.toString(), Toast.LENGTH_SHORT);
+            }
+            currentToast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 0);
+            currentToast.show();
+        }
     }
 
     /**
@@ -150,7 +173,7 @@ public class Player {
 
     /**
      * Adds points to the player's total.
-     *
+     * <p/>
      * If the total becomes negative, it will be set to 0.
      *
      * @param newPoints the number of points to add - can be negative
