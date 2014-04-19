@@ -123,6 +123,7 @@ public class GameFragment extends Fragment implements GameCallBack {
      */
     public void recreateView() {
         grid.setAdapter(new GameAdapter(game, this, getActivity()));
+        grid.setVisibility(View.VISIBLE);
         grid.invalidate();
     }
 }

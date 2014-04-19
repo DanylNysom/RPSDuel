@@ -23,8 +23,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.danylnysom.rpsduel.R;
+import com.danylnysom.rpsduel.activity.RPSActivity;
 import com.danylnysom.rpsduel.game.BluetoothGame;
 import com.danylnysom.rpsduel.player.Player;
 
@@ -39,9 +41,13 @@ import java.util.UUID;
 public class BluetoothOpponentFinderFragment extends Fragment {
     private static final String SERVER_NAME = "rpsduel";
     private static final String SERVER_UUID = "03579bd0-80c4-418f-a2c5-424f7733bf6e";
-    private static final int DISCOVER_REQUEST_CODE = 16234;
-    private static final int POPUP_DURATION = 60;
+    private static final int DISCOVERABLE_REQUEST_CODE = 16234;
     private static final int CONFIRM = 111;
+    private static final int DISCOVERABLE_DURATION = 300;
+
+    /* In seconds */
+    private static final int TIMEOUT_DURATION = 10;
+    private static final int TIMEOUT_INCREMENT = 1;
 
     private String originalName = null;
     private ArrayAdapter<String> opponentsAdapter;
@@ -54,6 +60,7 @@ public class BluetoothOpponentFinderFragment extends Fragment {
     private BluetoothGame game = null;
     private ProgressDialog progress = null;
     private int confirmation = -1;
+    private volatile boolean discoverable = false;
 
     /**
      * Overridden to force usage of the newInstance() method.
@@ -101,25 +108,25 @@ public class BluetoothOpponentFinderFragment extends Fragment {
                     }
                     String deviceString = opponentsAdapter.getItem(position);
                     final String[] opponent = deviceString.split("\n");
-                    new RequestConnectionThread(opponent).start();
 
-                    progress = new ProgressDialog(parent.getContext(), ProgressDialog.STYLE_SPINNER);
+                    progress = new ProgressDialog(parent.getContext());
+                    progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    new RequestConnectionThread(opponent, progress).start();
                     progress.setTitle("Waiting for confirmation");
+                    progress.setMax(TIMEOUT_DURATION);
+                    progress.setProgress(TIMEOUT_DURATION);
                     progress.setOnDismissListener(new Dialog.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                             if (confirmation == CONFIRM) {
                                 connectionMade(opponent[0]);
                             } else {
-                                try {
-                                    socket.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                btadapter.startDiscovery();
                             }
                         }
                     });
                     progress.show();
+
                 }
             });
         }
@@ -145,33 +152,53 @@ public class BluetoothOpponentFinderFragment extends Fragment {
             originalName = btadapter.getName();
         }
 
-        btadapter.cancelDiscovery();
-
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    if (device != null) {
-                        opponentsAdapter.add(device.getName() + "\n" + device.getAddress());
-                        opponentsAdapter.notifyDataSetChanged();
-                    }
+                switch (action) {
+                    case BluetoothDevice.ACTION_FOUND:
+                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                        if (device != null) {
+                            opponentsAdapter.add(device.getName() + "\n" + device.getAddress());
+                            opponentsAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                        ((RPSActivity) getActivity()).showProgressIndicator(true);
+                        opponentsAdapter.clear();
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                        ((RPSActivity) getActivity()).showProgressIndicator(false);
+                        break;
+                    case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
+                        if (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+                                == BluetoothAdapter.SCAN_MODE_NONE) {
+                            discoverable = false;
+                        }
+                        break;
                 }
             }
         };
 
         /* Register BroadcastReceiver for finding new devices */
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        getActivity().registerReceiver(receiver, filter);
+        IntentFilter foundFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        IntentFilter startedFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        IntentFilter finishedFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
-        /* Allow this device to be discovered by others */
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, POPUP_DURATION);
-        startActivityForResult(discoverableIntent, DISCOVER_REQUEST_CODE);
+        getActivity().registerReceiver(receiver, foundFilter);
+        getActivity().registerReceiver(receiver, startedFilter);
+        getActivity().registerReceiver(receiver, finishedFilter);
 
         /* Start searching for other devices */
         btadapter.startDiscovery();
+
+        if (!discoverable) {
+            /* Allow this device to be discovered by others */
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_DURATION);
+            startActivityForResult(discoverableIntent, DISCOVERABLE_REQUEST_CODE);
+        }
     }
 
     /**
@@ -187,8 +214,9 @@ public class BluetoothOpponentFinderFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case DISCOVER_REQUEST_CODE:
+            case DISCOVERABLE_REQUEST_CODE:
                 if (resultCode != Activity.RESULT_CANCELED) {
+                    discoverable = true;
                     /* Start serversocket to accept connections */
                     serverThread = new AcceptThread(getActivity());
                     serverThread.start();
@@ -237,9 +265,13 @@ public class BluetoothOpponentFinderFragment extends Fragment {
         }
         if (btadapter != null) {
             btadapter.cancelDiscovery();
+            ((RPSActivity) getActivity()).showProgressIndicator(false);
         }
         if (opponentsAdapter != null) {
             opponentsAdapter.clear();
+        }
+        if (serverThread != null) {
+            serverThread.cancel();
         }
     }
 
@@ -249,6 +281,8 @@ public class BluetoothOpponentFinderFragment extends Fragment {
     void connectionMade(String opponent) {
         game.setSocketStreams(socket);
         game.setMultiplayerWeaponSet();
+        game.setOpponent(opponent);
+        Toast.makeText(getActivity(), "connected!", Toast.LENGTH_SHORT).show();
         getFragmentManager().popBackStackImmediate();
     }
 
@@ -270,7 +304,6 @@ public class BluetoothOpponentFinderFragment extends Fragment {
             try {
                 tmp = btadapter.listenUsingInsecureRfcommWithServiceRecord(SERVER_NAME, UUID.fromString(SERVER_UUID));
             } catch (IOException e) {
-                System.err.println("server didn't open???");
             }
             server = tmp;
         }
@@ -347,6 +380,7 @@ public class BluetoothOpponentFinderFragment extends Fragment {
                                             e.printStackTrace();
                                         }
                                         socket = null;
+                                        btadapter.startDiscovery();
                                     }
                                 }
                             })
@@ -375,33 +409,106 @@ public class BluetoothOpponentFinderFragment extends Fragment {
      * the GUI would lock up, which is functionality that was voted against at our last Round Table.
      */
     private class RequestConnectionThread extends Thread {
+        KillThread killThread = null;
         private String name;
         private String address;
+        private ProgressDialog progress;
 
-        public RequestConnectionThread(String[] opponent) {
+        /**
+         * A constructor.
+         *
+         * @param opponent the opponent's name and MAC address
+         * @param progress the "waiting for response from opponent" progress dialog. Should already
+         *                 be running
+         */
+        public RequestConnectionThread(String[] opponent, ProgressDialog progress) {
             name = opponent[0];//deviceString.replaceFirst("^.*\n", "");
             address = opponent[1];
+            this.progress = progress;
         }
 
+        /**
+         * Requests the opponent for a duel and waits for a response.
+         */
         public void run() {
             BluetoothSocket tmp;
             BluetoothDevice target = btadapter.getRemoteDevice(address);
-
             try {
                 tmp = target.createInsecureRfcommSocketToServiceRecord(UUID.fromString(SERVER_UUID));
+
+                killThread = new KillThread(progress, tmp);
+                killThread.start();
                 tmp.connect();
                 socket = tmp;
+
                 Player player = Player.getPlayer();
                 byte[] connectMessage = (player.getName() + " (" + player.getStat(Player.LEVEL) + ")").getBytes();
                 socket.getOutputStream().write(connectMessage);
                 confirmation = socket.getInputStream().read();
-                if (progress != null) {
-                    progress.dismiss();
-                    progress = null;
+                cleanUp();
+            } catch (Exception e) {
+                try {
+                    if (socket != null) {
+                        socket.close();
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
                 }
-            } catch (IOException e) {
                 e.printStackTrace();
             }
+            cleanUp();
+        }
+
+        /**
+         * Cancels any threads created by this object and dismisses the dialog.
+         */
+        private void cleanUp() {
+            if (killThread != null && killThread.isAlive()) {
+                killThread.cancel();
+            }
+            if (progress != null && progress.isShowing()) {
+                progress.dismiss();
+            }
+        }
+    }
+
+    /**
+     * A Thread used to dismiss a ProgressDialog after TIMEOUT_DURATION seconds.
+     */
+    private class KillThread extends Thread {
+        volatile boolean done = false;
+        BluetoothSocket killSocket;
+        ProgressDialog progress;
+
+        public KillThread(ProgressDialog progress, BluetoothSocket socket) {
+            this.progress = progress;
+            this.killSocket = socket;
+        }
+
+        public void run() {
+            int count = 0;
+            while (!done && count < TIMEOUT_DURATION) {
+                try {
+                    Thread.sleep(TIMEOUT_INCREMENT * 1000);
+                } catch (InterruptedException e) {
+                    progress.dismiss();
+                }
+                count += TIMEOUT_INCREMENT;
+                progress.setProgress(TIMEOUT_DURATION - count);
+            }
+            if (done) {
+                return;
+            }
+            try {
+                progress.dismiss();
+                killSocket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void cancel() {
+            done = true;
         }
     }
 }

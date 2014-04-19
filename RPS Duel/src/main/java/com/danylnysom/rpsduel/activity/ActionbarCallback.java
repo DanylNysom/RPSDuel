@@ -6,7 +6,7 @@ package com.danylnysom.rpsduel.activity;
 public interface ActionbarCallback {
 
     /**
-     * Set the level and level and points displays.
+     * Set the level and points displays.
      */
     public abstract void updateLevelDisplay();
 

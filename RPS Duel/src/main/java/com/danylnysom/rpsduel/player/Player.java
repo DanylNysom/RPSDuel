@@ -112,7 +112,7 @@ public class Player {
             case GAMES_TODAY:
                 return 5;
             case LEVEL:
-                return (points >= 1000) ? (int) (Math.log(points / 1000) / Math.log(2)) + 1 : 0;
+                return (points >= 1000) ? (int) (Math.log(points / 1000) / Math.log(2)) + 2 : 1;
             case LOSSES:
                 return gameTotal - wins;
             case POINTS:
@@ -146,10 +146,8 @@ public class Player {
         if (receivedPoints != 0) {
             if (currentToast != null) {
                 currentToast.cancel();
-                currentToast.setText(builder.toString());
-            } else {
-                currentToast = Toast.makeText(context, builder.toString(), Toast.LENGTH_SHORT);
             }
+            currentToast = Toast.makeText(context, builder.toString(), Toast.LENGTH_SHORT);
             currentToast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 0);
             currentToast.show();
         }

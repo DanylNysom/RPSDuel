@@ -1,6 +1,7 @@
 package com.danylnysom.rpsduel.game;
 
 import android.bluetooth.BluetoothSocket;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class BluetoothGame extends Game {
     private BluetoothSocket socket;
     private InputStream in = null;
     private OutputStream out = null;
+    private String opponentName = null;
+    private int opponentLevel;
 
     /**
      * Creates a new BluetoothGame and displays it in the location of the specified fragment.
@@ -33,9 +36,11 @@ public class BluetoothGame extends Game {
      */
     public BluetoothGame(GameFragment fragment) {
         super(fragment);
-        FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+        FragmentManager fm = fragment.getFragmentManager();
+        fm.popBackStack("bluetoothgame", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FragmentTransaction ft = fm.beginTransaction();
         ft.add(fragment.getId(), BluetoothOpponentFinderFragment.newInstance(this));
-        ft.addToBackStack(null);
+        ft.addToBackStack("bluetoothgame");
         ft.commit();
     }
 
@@ -62,6 +67,20 @@ public class BluetoothGame extends Game {
     }
 
     /**
+     * Copies this game's opponent details.
+     *
+     * @param opponentTag the opponent's name and level in the format:
+     *                    "[NAME] ([LEVEL])"
+     *                    (no quotation marks, of course)
+     */
+    public void setOpponent(String opponentTag) {
+        int parenIndex = opponentTag.lastIndexOf("(");
+        opponentName = opponentTag.substring(0, parenIndex);
+        opponentLevel =
+                Integer.parseInt(opponentTag.substring(parenIndex + 1, opponentTag.length() - 1));
+    }
+
+    /**
      * Get's the opponents weapon choice from the InputStream, sends the players weapon via the
      * OutputStream, outputs the result, and updates the player's score accordingly. It's pretty
      * wonderful.
@@ -83,13 +102,15 @@ public class BluetoothGame extends Game {
 
         Player player = Player.getPlayer();
         int result = getWinStatus();
-
+        int level = player.getStat(Player.LEVEL);
         switch (result) {
             case -1:
-                player.addGame(100, fragment.getActivity());
+                player.addGame((int) (-1000 * level / (4.0 * opponentLevel) * (Math.pow(2, level - 3))),
+                        fragment.getActivity());
                 break;
             case 1:
-                player.addGame(1000, fragment.getActivity());
+                player.addGame((int) (1000 * (Math.pow(2, level - 5) + Math.pow(2, opponentLevel - 6))),
+                        fragment.getActivity());
                 break;
             case 0:
                 Toast.makeText(fragment.getActivity(), "You tied - try again", Toast.LENGTH_SHORT).show();
