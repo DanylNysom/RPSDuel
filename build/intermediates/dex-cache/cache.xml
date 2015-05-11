@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2">
+
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="b2c07cdb814fe988ad05f7b4d767a841514a5991">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-97d792d4fa1b93539ca6fc9ff5dc99b973aa9148.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="c95ba8152923e4872e86a82cfcba9a51c0214328">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-54e5fc053199f349b9040a50eaf92aea94edf609.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client-jackson2/1.19.0/81dbf9795d387d5e80e55346582d5f2fb81a42eb/google-http-client-jackson2-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="81dbf9795d387d5e80e55346582d5f2fb81a42eb">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-http-client-jackson2-1.19.0-710c39faef5fb8707532d68555a31e307f89a0f7.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="7215ac1f2fca947b9415a6ee2a1bf991364aab24">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-351502661c3b09376207b58b9613baf8dce794e0.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="565a01f90f1529f73362707c4c185d0623a68782">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-3898474c07485757deec3400306846438113565b.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="fe3e0c6de7cceed888b277487238b6af9a1cc299">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-cc916cb502ff62c3809eb4f5568612c18246939f.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.guava/guava-jdk5/13.0/381ae6c8add7c98e9bcddb1e0b898400cd6fc3f7/guava-jdk5-13.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="381ae6c8add7c98e9bcddb1e0b898400cd6fc3f7">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/guava-jdk5-13.0-08006d2dd0fdb8dece44259d1bc10ae13804f838.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.oauth-client/google-oauth-client/1.19.0/d473a8962e14a707a3716637e4898bb2dd9643f2/google-oauth-client-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="d473a8962e14a707a3716637e4898bb2dd9643f2">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-oauth-client-1.19.0-290b4a8225a7f8ddee302d634bc9bd0f20f8dcc5.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client/1.19.0/cdca49ad0977c040f603478aa2e16b2775c8fec6/google-http-client-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="cdca49ad0977c040f603478aa2e16b2775c8fec6">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-http-client-1.19.0-c195e86962f0177cad4194ec7ea6006a0f42a1ba.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="0708ef60917bf94913fe9ef972a655b99462dca7">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-14086af6ff15a48d8c19cbc279eca8d070742759.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="59652857a825fff0de62166fca1bc9553cc01abb">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-7930c42ca529f4b73b71d2e683c55ebab3e77979.jar" />
+    </item>
+    <item
+        jar="/home/danyl/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.1.1/support-annotations-22.1.1.jar"
+        jumboMode="false" revision="22.0.1" sha1="01d051a6bfb1218b1db2d3a5af0480ac2c25c42a">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/support-annotations-22.1.1-be4a0182694bc9ccee6298e3ed71b46883020377.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/jars/libs/internal_impl-22.1.1.jar"
+        jumboMode="false" revision="22.0.1" sha1="9e070ad32b2700b0343e8e0cccc437733d91ba3a">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/internal_impl-22.1.1-5f658a53fa9e7001a2b6c79b3102eed807d39076.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="e5b9f5b0aa8dee788beb63d23832cb29ce771343">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-cc65a5e42f88f41f96e81ca5cee9d67b4ed7e922.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/1.3.9/40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf/jsr305-1.3.9.jar"
+        jumboMode="false" revision="22.0.1" sha1="40719ea6961c0cb6afaeb6a921eaa1f6afd4cfdf">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/jsr305-1.3.9-ebc1bbc2325312f3a959a6f1d5b1637f466372f9.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="9c9dea9e85aceb09d95df5e6f7bc8a43fc286068">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-6489bb53b383afdad45c52ebfdf100ee3ed257b7.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client-android/1.19.0/e3f11020c2c812112803d252d1392872d3f619c8/google-http-client-android-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="e3f11020c2c812112803d252d1392872d3f619c8">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-http-client-android-1.19.0-1decdd1751c023da16321f327d59b06fbb0d13da.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="f2f7ec211ce4d244ee97a57523eeb4526dc3cf8a">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-1290dc5dd6ee8cd1edee8dc64130f63309005f07.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="bb36004beb02b69562cbec9aa7d6a3cf16bf5d1b">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-b04c4b3e135f0c48d2dfeaf40f9167015ece8227.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.1.1/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="a3ff3c506644c820eb2bdf06e8339f72be578551">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-4cf5b373219ed445198273c46477039ef5ae1280.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="5ea948d825957be6c4358c48422bee60eef2d487">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-8265c3ae1452703dafee3ea1ba3429bb72605429.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="e35fae1b377c23aa5fd2d309a190c2d0f73d54ec">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-6917c8461d4d341809c50e7298868c95ebe24be4.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="e5bf453b070c1e39297986144960e45afa0fdfad">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-0d96d3cff2d9db6eb7ecd0cd77f81ca4f14065dc.jar" />
+    </item>
+    <item jar="/home/danyl/AndroidStudioProjects/RPSDuel/api/build/libs/api-android-endpoints.jar"
+        jumboMode="false" revision="22.0.1" sha1="60feeb62737c97e8e7cbb32e9b2dae57f6a93d91">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/api-android-endpoints-7f8d1023a5b0d4e2897593e5568e0440bd2cc418.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="a0ce76dfaccbfbd6c551ed2174280aaabe60fe47">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-c4c2f053ca1c1fd6257ecca8d2f53dcaed5106be.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.api-client/google-api-client-android/1.19.0/ba2aafb867f6af469f936ae76426cf0a280094bd/google-api-client-android-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="ba2aafb867f6af469f936ae76426cf0a280094bd">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-api-client-android-1.19.0-f6076690ddb001c91c15727f27f79ce512f533ee.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="4f4fe3c23776540625f3c2844152a7510fddf9f1">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-bd9909a7353a0f4b594c00df4cc6e1461f23bcc0.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.1.3/f6c3aed1cdfa21b5c1737c915186ea93a95a58bd/jackson-core-2.1.3.jar"
+        jumboMode="false" revision="22.0.1" sha1="f6c3aed1cdfa21b5c1737c915186ea93a95a58bd">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/jackson-core-2.1.3-0f2871ab88af0b6898bb715ff498aac2e099b394.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="3988694bf9d8186ff97ad5cdfa4ed88b5010fe08">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-42d69542a5ec0aa14aafa5577077c0f718619fcc.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appstate/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="0180d031a7b54dabb93b4af3869468b55dc938bd">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-3f3787611a721958f6a54d39c6038f23c8d36a78.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="3b4ff5c39dace8f3b4ab4cab8191785547a0815f">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-e7dea6ce7acd3518c9456536b372ec4decddec0e.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="b48d5c51a9a9e329005106b4667f54948de4d4d8">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-070cb75d812affff9c460be1049711303f798edb.jar" />
+    </item>
+    <item
+        jar="/home/danyl/.gradle/caches/modules-2/files-2.1/com.google.api-client/google-api-client/1.19.0/6a21277d9bebe267b7ddee028b241eebc756c040/google-api-client-1.19.0.jar"
+        jumboMode="false" revision="22.0.1" sha1="6a21277d9bebe267b7ddee028b241eebc756c040">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/google-api-client-1.19.0-4fd0e9cfe4e1454a7c94a59f425ea054ee866044.jar" />
+    </item>
+    <item
+        jar="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.3.0/jars/classes.jar"
+        jumboMode="false" revision="22.0.1" sha1="6046e5cdaf799120b7c56a5a061d80e8854c4d34">
+        <dex
+            dex="/home/danyl/AndroidStudioProjects/RPSDuel/app/build/intermediates/pre-dexed/debug/classes-f9cc847719bc4763cf29ba16f8c0ca6f5dbc57c9.jar" />
+    </item>
+
+</items>
