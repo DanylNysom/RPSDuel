@@ -7,15 +7,15 @@ import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
-public class StatsActivity extends AppCompatActivity {
+
+public class StatsActivity extends AppCompatActivity implements PlayerReceiver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RelativeLayout layout = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_stats, null);
-        TextView messageBox = (TextView) layout.findViewById(R.id.message);
-        messageBox.setText(PlayerManager.getManager().getLocalPlayer().getEmail());
-        setContentView(layout);
+        PlayerManager.getManager(this).getLocalPlayer(this, this);
+        setContentView(new RelativeLayout(getApplicationContext()));
     }
 
     @Override
@@ -38,5 +38,20 @@ public class StatsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void updatePlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+        RelativeLayout layout = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_stats, null);
+        ((TextView) layout.findViewById(R.id.name)).setText(player.getName());
+        ((TextView) layout.findViewById(R.id.email)).setText(player.getEmail());
+        ((TextView) layout.findViewById(R.id.level)).setText("" + player.getLevel());
+        ((TextView) layout.findViewById(R.id.points)).setText("" + player.getPoints());
+        ((TextView) layout.findViewById(R.id.wins)).setText("" + player.getWins());
+        ((TextView) layout.findViewById(R.id.losses)).setText("" + player.getLosses());
+        setContentView(layout);
     }
 }

@@ -68,12 +68,42 @@ public class PlayerEndpoint {
     }
 
     /**
+     * Returns the {@link Player} with the corresponding ID, creating one if necessary.
+     *
+     * @param email the ID of the entity to be retrieved
+     * @return the entity with the corresponding ID
+     * @throws NotFoundException if there is no {@code Player} with the provided ID and a new one
+     * could not be created.
+     */
+    @ApiMethod(
+            name = "insertOrGet",
+            path = "player/insertorget/{email}",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public Player insertOrGet(@Named("email") String email, @Named("name") String name) throws NotFoundException {
+        try {
+            checkExists(email);
+        } catch (NotFoundException e) {
+            Player newPlayer = new Player();
+            newPlayer.setEmail(email);
+            insert(newPlayer);
+        }
+
+        try {
+            Player player = get(email);
+            player.setName(name);
+            return update(email, player);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Could not insert or get Player with ID: " + email);
+        }
+    }
+
+    /**
      * Inserts a new {@code Player}.
      */
     @ApiMethod(
             name = "insert",
             path = "player",
-            httpMethod = ApiMethod.HttpMethod.POST)
+            httpMethod = ApiMethod.HttpMethod.PUT)
     public Player insert(Player player) {
         // Typically in a RESTful API a POST does not have a known ID (assuming the ID is used in the resource path).
         // You should validate that player.email has not been set. If the ID type is not supported by the
@@ -81,7 +111,7 @@ public class PlayerEndpoint {
         //
         // If your client provides the ID then you should probably use PUT instead.
         ofy().save().entity(player).now();
-        logger.info("Created Player.");
+        logger.info("Created Player " + player.getEmail());
 
         return ofy().load().entity(player).now();
     }
@@ -128,7 +158,7 @@ public class PlayerEndpoint {
      * List all entities.
      *
      * @param cursor used for pagination to determine which page to return
-     * @param limit  the maximum number of entries to return
+     * @param limit  the maximum number of entries to returnt
      * @return a response that encapsulates the result list and the next page token/cursor
      */
     @ApiMethod(

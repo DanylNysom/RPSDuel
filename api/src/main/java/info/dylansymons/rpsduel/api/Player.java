@@ -7,6 +7,7 @@ import com.googlecode.objectify.annotation.Id;
 public class Player {
     @Id
     protected String email;
+
     protected String name;
     protected int points;
     protected int wins;
@@ -22,6 +23,10 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPoints() {
