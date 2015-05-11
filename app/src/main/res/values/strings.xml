@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">RPSDuel</string>
+    <string name="title_activity_stats">Statistics</string>
+    <string name="action_settings">Settings</string>
+    <string name="wins_label">Wins:</string>
+    <string name="losses_label">Losses:</string>
+    <string name="no_internet">Unable to log in. Try checking your internet connection.</string>
+    <string name="title_activity_welcome">RPSDuel</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="name_prompt">Welcome to RPSDuel! What\'s your name?</string>
+    <string name="name_hint">enter your name</string>
+    <string name="ok">OK</string>
+    <string name="error_missing_name">Please enter a name</string>
+</resources>
