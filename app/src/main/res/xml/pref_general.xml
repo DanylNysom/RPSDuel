@@ -1,0 +1,7 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="@string/pref_key_name"
+        android:title="@string/pref_title_name" />
+
+</PreferenceScreen>

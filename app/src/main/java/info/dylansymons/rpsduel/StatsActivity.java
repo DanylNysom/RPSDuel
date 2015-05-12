@@ -1,43 +1,59 @@
 package info.dylansymons.rpsduel;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.RelativeLayout;
+import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.plus.Plus;
 
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
 
-public class StatsActivity extends AppCompatActivity implements PlayerReceiver {
+public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
+    private static final String TAG = StatsActivity.class.getSimpleName();
+    private View mStatsView;
+    private View mLogInView;
+
+    @Override
+    protected void onPlusClientSignIn() {
+        String email = Plus.AccountApi.getAccountName(getPlusClient());
+        PlayerManager.getManager(this).setLocalPlayer(email);
+        PlayerManager.getManager(this).getLocalPlayer(this, this);
+    }
+
+    @Override
+    protected void onPlusClientSignOut() {
+
+    }
+
+    @Override
+    protected void onPlusClientBlockingUI(boolean show) {
+
+    }
+
+    @Override
+    protected void updateConnectButtonState() {
+        boolean connected = getPlusClient().isConnected();
+
+        mStatsView.setVisibility(connected ? View.VISIBLE : View.GONE);
+        mLogInView.setVisibility(connected ? View.GONE : View.VISIBLE);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PlayerManager.getManager(this).getLocalPlayer(this, this);
-        setContentView(new RelativeLayout(getApplicationContext()));
-    }
+        setContentView(R.layout.activity_stats);
+        mLogInView = findViewById(R.id.logInView);
+        mStatsView = findViewById(R.id.statsView);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        SignInButton signIn = (SignInButton) findViewById(R.id.plus_sign_in_button);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
     }
 
     @Override
@@ -45,13 +61,18 @@ public class StatsActivity extends AppCompatActivity implements PlayerReceiver {
         if (player == null) {
             return;
         }
-        RelativeLayout layout = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_stats, null);
-        ((TextView) layout.findViewById(R.id.name)).setText(player.getName());
-        ((TextView) layout.findViewById(R.id.email)).setText(player.getEmail());
-        ((TextView) layout.findViewById(R.id.level)).setText("" + player.getLevel());
-        ((TextView) layout.findViewById(R.id.points)).setText("" + player.getPoints());
-        ((TextView) layout.findViewById(R.id.wins)).setText("" + player.getWins());
-        ((TextView) layout.findViewById(R.id.losses)).setText("" + player.getLosses());
-        setContentView(layout);
+        mLogInView.setVisibility(View.GONE);
+        ((TextView) mStatsView.findViewById(R.id.name)).setText(player.getName());
+        ((TextView) mStatsView.findViewById(R.id.email)).setText(player.getEmail());
+        ((TextView) mStatsView.findViewById(R.id.level)).setText("" + player.getLevel());
+        ((TextView) mStatsView.findViewById(R.id.points)).setText("" + player.getPoints());
+        ((TextView) mStatsView.findViewById(R.id.wins)).setText("" + player.getWins());
+        ((TextView) mStatsView.findViewById(R.id.losses)).setText("" + player.getLosses());
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        updateConnectButtonState();
+        onPlusClientSignOut();
     }
 }

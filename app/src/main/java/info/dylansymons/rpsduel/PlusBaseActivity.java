@@ -1,10 +1,12 @@
 package info.dylansymons.rpsduel;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,7 +16,7 @@ import com.google.android.gms.plus.Plus;
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
-public abstract class PlusBaseActivity extends Activity
+public abstract class PlusBaseActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -33,11 +35,6 @@ public abstract class PlusBaseActivity extends Activity
     // attempt has been made, this is non-null.
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
-
-    /**
-     * Called when the {@link GoogleApiClient} revokes access to this app.
-     */
-    protected abstract void onPlusClientRevokeAccess();
 
     /**
      * Called when the GoogleApiClient is successfully connected.
@@ -72,6 +69,30 @@ public abstract class PlusBaseActivity extends Activity
                         .addScope(Plus.SCOPE_PLUS_PROFILE)
                         .addApi(Plus.API)
                         .build();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_base, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -144,7 +165,6 @@ public abstract class PlusBaseActivity extends Activity
      * Revoke Google+ authorization completely.
      */
     public void revokeAccess() {
-
         if (apiClient.isConnected()) {
             // Clear the default account as in the Sign Out.
             Plus.AccountApi.clearDefaultAccount(apiClient);
@@ -153,12 +173,7 @@ public abstract class PlusBaseActivity extends Activity
             // onAccessRevoked when it is complete, as it needs to reach the Google
             // authentication servers to revoke all tokens.
             Plus.AccountApi.revokeAccessAndDisconnect(apiClient);
-//            Plus.AccountApi.revokeAccessAndDisconnect(new GoogleApiClient.OnAccessRevokedListener() {
-//                public void onAccessRevoked(ConnectionResult result) {
-//                    updateConnectButtonState();
-//                    onPlusClientRevokeAccess();
-//                }
-//            });
+            signOut();
         }
 
     }

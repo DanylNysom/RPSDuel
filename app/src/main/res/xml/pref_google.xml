@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:defaultValue="@string/no_google_account"
+        android:key="@string/pref_key_google_account"
+        android:title="@string/pref_title_google_account" />
+
+    <Preference
+        android:key="@string/pref_key_google_disconnect"
+        android:title="@string/pref_title_google_disconnect" />
+
+    <Preference
+        android:key="@string/pref_key_google_delete"
+        android:summary="@string/pref_summary_google_delete"
+        android:title="@string/pref_title_google_delete" />
+
+</PreferenceScreen>
