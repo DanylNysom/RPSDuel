@@ -9,6 +9,9 @@ import com.google.android.gms.plus.Plus;
 
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
+/**
+ * An Activity for displaying the local player's statistics to the user.
+ */
 public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
     private static final String TAG = StatsActivity.class.getSimpleName();
     private boolean error;
