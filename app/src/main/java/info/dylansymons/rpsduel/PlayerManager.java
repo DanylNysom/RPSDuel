@@ -3,7 +3,6 @@ package info.dylansymons.rpsduel;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Pair;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -35,12 +34,13 @@ public class PlayerManager {
         return singleton;
     }
 
-    public void getLocalPlayer(Activity activity, PlayerReceiver receiver) {
+    public void getLocalPlayer(Context context, PlayerReceiver receiver) {
         if (createPlayerFlag) {
-            String name = getName(activity);
-            new PlayerLogInTask(activity).execute(localPlayerEmail, name);
+            String name = getName(context);
+            new PlayerLogInTask(localPlayerEmail, name).execute(receiver);
+        } else {
+            new PlayerGetter(localPlayerEmail).execute(receiver);
         }
-        new PlayerGetter(activity, localPlayerEmail).execute(receiver);
     }
 
     public void setLocalPlayer(String email) {
@@ -52,28 +52,33 @@ public class PlayerManager {
         new PlayerDeleteTask(activity).execute(localPlayerEmail);
     }
 
-    public String getName(Activity activity) {
-        return activity
+    public String getName(Context context) {
+        return context
                 .getSharedPreferences(PLAYER_PREFS, Activity.MODE_PRIVATE)
                 .getString(NAME, "");
     }
 
-    public void updateName(Activity activity, String name) {
+    public void updateName(Activity activity, String name, PlayerReceiver receiver) {
         activity
                 .getSharedPreferences(PLAYER_PREFS, Activity.MODE_PRIVATE)
                 .edit()
                 .putString(NAME, name)
                 .apply();
-        Pair<String, String> data = new Pair<>("name", name);
-        new PlayerUpdateTask(activity).execute(data);
+        String data[][] = {{"name", name}};
+        new PlayerUpdateTask(data).execute(receiver);
     }
 
-    private class PlayerLogInTask extends AsyncTask<String, Void, Player> {
+    private class PlayerLogInTask extends AsyncTask<PlayerReceiver, Void, Player> {
         private PlayerApi playerApiService = null;
-        private Activity activity;
+        private PlayerReceiver receivers[];
+        private String email;
+        private String name;
+        private boolean connectionFailed;
 
-        public PlayerLogInTask(Activity activity) {
-            this.activity = activity;
+        public PlayerLogInTask(String email, String name) {
+            this.email = email;
+            this.name = name;
+            connectionFailed = false;
         }
 
         @Override
@@ -86,31 +91,42 @@ public class PlayerManager {
         }
 
         @Override
-        protected Player doInBackground(String... params) {
+        protected Player doInBackground(PlayerReceiver... params) {
+            receivers = params;
             Player returnPlayer = null;
 
             try {
-                returnPlayer = playerApiService.insertOrGet(params[0], params[1]).execute();
+                returnPlayer = playerApiService.insertOrGet(email, name).execute();
             } catch (UnknownHostException uhe) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, R.string.no_internet, Toast.LENGTH_LONG).show();
-                    }
-                });
+                connectionFailed = true;
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
             return returnPlayer;
         }
+
+        @Override
+        protected void onPostExecute(Player retreivedPlayer) {
+            for (PlayerReceiver receiver : receivers) {
+                if (!connectionFailed) {
+                    receiver.updatePlayer(retreivedPlayer);
+                } else {
+                    receiver.connectionFailed();
+                }
+            }
+        }
     }
 
-    private class PlayerUpdateTask extends AsyncTask<Pair<String, String>, Void, Void> {
+    private class PlayerUpdateTask extends AsyncTask<PlayerReceiver, Void, Player> {
         private PlayerApi playerApiService;
-        private Activity activity;
+        private String[][] data;
+        private PlayerReceiver[] receivers;
+        private boolean connectionFailed;
 
-        public PlayerUpdateTask(Activity activity) {
-            this.activity = activity;
+
+        public PlayerUpdateTask(String[][] data) {
+            this.data = data;
+            connectionFailed = false;
         }
 
         @Override
@@ -123,27 +139,36 @@ public class PlayerManager {
         }
 
         @Override
-        protected Void doInBackground(Pair... params) {
+        protected Player doInBackground(PlayerReceiver... params) {
+            receivers = params;
+            Player player = null;
             try {
-                Player player = playerApiService.get(localPlayerEmail).execute();
-                for (Pair pair : params) {
-                    if (pair.first.equals(NAME)) {
-                        player.setName((String) pair.second);
+                player = playerApiService.get(localPlayerEmail).execute();
+                for (String[] pair : data) {
+                    if (pair[0].equals(NAME)) {
+                        player.setName(pair[1]);
                     }
                 }
                 playerApiService.update(localPlayerEmail, player);
             } catch (UnknownHostException uhe) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, R.string.no_internet, Toast.LENGTH_LONG).show();
-                    }
-                });
+                connectionFailed = true;
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
-            return null;
+            return player;
         }
+
+        @Override
+        protected void onPostExecute(Player retreivedPlayer) {
+            for (PlayerReceiver receiver : receivers) {
+                if (!connectionFailed) {
+                    receiver.updatePlayer(retreivedPlayer);
+                } else {
+                    receiver.connectionFailed();
+                }
+            }
+        }
+
     }
 
     private class PlayerDeleteTask extends AsyncTask<String, Void, Void> {
@@ -184,12 +209,12 @@ public class PlayerManager {
     private class PlayerGetter extends AsyncTask<PlayerReceiver, Void, Player> {
         private PlayerApi playerApiService = null;
         private PlayerReceiver receivers[];
-        private Activity activity;
         private String targetEmail;
+        private boolean connectionFailed;
 
-        public PlayerGetter(Activity activity, String email) {
-            this.activity = activity;
+        public PlayerGetter(String email) {
             this.targetEmail = email;
+            connectionFailed = false;
         }
 
         @Override
@@ -209,12 +234,7 @@ public class PlayerManager {
             try {
                 returnPlayer = playerApiService.get(targetEmail).execute();
             } catch (UnknownHostException uhe) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, R.string.no_internet, Toast.LENGTH_LONG).show();
-                    }
-                });
+                connectionFailed = true;
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -224,7 +244,11 @@ public class PlayerManager {
         @Override
         protected void onPostExecute(Player retreivedPlayer) {
             for (PlayerReceiver receiver : receivers) {
-                receiver.updatePlayer(retreivedPlayer);
+                if (!connectionFailed) {
+                    receiver.updatePlayer(retreivedPlayer);
+                } else {
+                    receiver.connectionFailed();
+                }
             }
         }
     }

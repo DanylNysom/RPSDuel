@@ -9,11 +9,12 @@ import com.google.android.gms.plus.Plus;
 
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
-
 public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
     private static final String TAG = StatsActivity.class.getSimpleName();
+    private boolean error;
     private View mStatsView;
     private View mLogInView;
+    private View mErrorView;
 
     @Override
     protected void onPlusClientSignIn() {
@@ -36,8 +37,9 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
     protected void updateConnectButtonState() {
         boolean connected = getPlusClient().isConnected();
 
-        mStatsView.setVisibility(connected ? View.VISIBLE : View.GONE);
-        mLogInView.setVisibility(connected ? View.GONE : View.VISIBLE);
+        mStatsView.setVisibility(connected && !error ? View.VISIBLE : View.GONE);
+        mLogInView.setVisibility(!connected && !error ? View.VISIBLE : View.GONE);
+        mErrorView.setVisibility(error ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -46,6 +48,8 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
         setContentView(R.layout.activity_stats);
         mLogInView = findViewById(R.id.logInView);
         mStatsView = findViewById(R.id.statsView);
+        mErrorView = findViewById(R.id.errorView);
+        error = false;
 
         SignInButton signIn = (SignInButton) findViewById(R.id.plus_sign_in_button);
         signIn.setOnClickListener(new View.OnClickListener() {
@@ -61,13 +65,23 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
         if (player == null) {
             return;
         }
-        mLogInView.setVisibility(View.GONE);
+        error = false;
         ((TextView) mStatsView.findViewById(R.id.name)).setText(player.getName());
         ((TextView) mStatsView.findViewById(R.id.email)).setText(player.getEmail());
         ((TextView) mStatsView.findViewById(R.id.level)).setText("" + player.getLevel());
         ((TextView) mStatsView.findViewById(R.id.points)).setText("" + player.getPoints());
         ((TextView) mStatsView.findViewById(R.id.wins)).setText("" + player.getWins());
         ((TextView) mStatsView.findViewById(R.id.losses)).setText("" + player.getLosses());
+        updateConnectButtonState();
+    }
+
+    @Override
+    public void connectionFailed() {
+        error = true;
+        ((TextView) mErrorView).setText(getString(R.string.no_internet));
+        updateConnectButtonState();
+        InternetConnectionJobManager.getManager().addJob(
+                new InternetConnectionJob.PlayerGetter(this, this));
     }
 
     @Override

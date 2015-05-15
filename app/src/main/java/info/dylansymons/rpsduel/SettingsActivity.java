@@ -6,8 +6,11 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.widget.Toast;
 
 import com.google.android.gms.plus.Plus;
+
+import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -65,7 +68,13 @@ public class SettingsActivity extends PlusBaseActivity {
         onPlusClientSignOut();
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    public static class SettingsFragment extends PreferenceFragment implements PlayerReceiver {
         private EditTextPreference name;
         private Preference account, disconnect, delete;
 
@@ -86,21 +95,21 @@ public class SettingsActivity extends PlusBaseActivity {
 
         private void initName() {
             String nameString = PlayerManager.getManager(getActivity()).getName(getActivity());
+            final PlayerReceiver receiver = this;
             name.setDefaultValue(nameString);
             name.setSummary(nameString);
             name.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     preference.setSummary((String) newValue);
-                    PlayerManager.getManager(getActivity()).updateName(getActivity(), (String) newValue);
+                    PlayerManager.getManager(getActivity()).updateName(getActivity(), (String) newValue, receiver);
                     return true;
                 }
             });
         }
 
         public void googleSignedIn() {
-            setButtonVisibility(true);
-            account.setSummary(Plus.AccountApi.getAccountName(plusActivity.getPlusClient()));
+            PlayerManager.getManager(getActivity()).getLocalPlayer(getActivity(), this);
             disconnect.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -133,6 +142,33 @@ public class SettingsActivity extends PlusBaseActivity {
         private void setButtonVisibility(boolean connected) {
             disconnect.setEnabled(connected);
             delete.setEnabled(connected);
+        }
+
+        @Override
+        public void updatePlayer(Player player) {
+            setButtonVisibility(true);
+            if (plusActivity.getPlusClient().isConnected()) {
+                account.setSummary(Plus.AccountApi.getAccountName(plusActivity.getPlusClient()));
+            }
+            InternetConnectionJobManager.getManager().addJob(
+                    new InternetConnectionJob.PlayerGetter(getActivity(), this));
+        }
+
+        @Override
+        public void connectionFailed() {
+            setButtonVisibility(false);
+            Preference.OnPreferenceClickListener listener = new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Toast.makeText(preference.getContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            };
+            account.setSummary(R.string.no_internet);
+            disconnect.setOnPreferenceClickListener(listener);
+            delete.setOnPreferenceClickListener(listener);
+            InternetConnectionJobManager.getManager().addJob(
+                    new InternetConnectionJob.PlayerGetter(getActivity(), this));
         }
     }
 }

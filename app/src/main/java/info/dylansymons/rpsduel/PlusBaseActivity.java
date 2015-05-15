@@ -291,4 +291,15 @@ public abstract class PlusBaseActivity extends AppCompatActivity
         return apiClient;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        apiClient.connect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        apiClient.disconnect();
+    }
 }
