@@ -1,9 +1,12 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.base;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import info.dylansymons.rpsduel.R;
+import info.dylansymons.rpsduel.settings.SettingsActivity;
 
 
 public class BaseActivity extends AppCompatActivity {

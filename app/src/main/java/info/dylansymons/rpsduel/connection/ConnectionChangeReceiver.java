@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.connection;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

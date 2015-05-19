@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.welcome;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import info.dylansymons.rpsduel.R;
+import info.dylansymons.rpsduel.player.PlayerManager;
+import info.dylansymons.rpsduel.player.StatsActivity;
 
 
 public class WelcomeActivity extends AppCompatActivity {

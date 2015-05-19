@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.player;
 
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
 

@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.base;
 
 import android.content.Intent;
 import android.content.IntentSender;
@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
+
+import info.dylansymons.rpsduel.R;
+import info.dylansymons.rpsduel.settings.SettingsActivity;
 
 
 /**

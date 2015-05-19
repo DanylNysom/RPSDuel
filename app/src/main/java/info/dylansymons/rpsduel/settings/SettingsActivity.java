@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.settings;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -10,7 +10,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.plus.Plus;
 
+import info.dylansymons.rpsduel.R;
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
+import info.dylansymons.rpsduel.base.PlusBaseActivity;
+import info.dylansymons.rpsduel.connection.InternetConnectionJob;
+import info.dylansymons.rpsduel.connection.InternetConnectionJobManager;
+import info.dylansymons.rpsduel.player.PlayerManager;
+import info.dylansymons.rpsduel.player.PlayerReceiver;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

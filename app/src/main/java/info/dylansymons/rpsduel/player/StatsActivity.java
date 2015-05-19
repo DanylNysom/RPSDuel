@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.player;
 
 import android.os.Bundle;
 import android.view.View;
@@ -7,7 +7,11 @@ import android.widget.TextView;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 
+import info.dylansymons.rpsduel.R;
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
+import info.dylansymons.rpsduel.base.PlusBaseActivity;
+import info.dylansymons.rpsduel.connection.InternetConnectionJob;
+import info.dylansymons.rpsduel.connection.InternetConnectionJobManager;
 
 /**
  * An Activity for displaying the local player's statistics to the user.
@@ -18,6 +22,7 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
     private View mStatsView;
     private View mLogInView;
     private View mErrorView;
+    private View mProgressView;
 
     @Override
     protected void onPlusClientSignIn() {
@@ -33,7 +38,10 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
 
     @Override
     protected void onPlusClientBlockingUI(boolean show) {
-
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mStatsView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mLogInView.setVisibility(show ? View.GONE : View.VISIBLE);
+        mErrorView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -52,6 +60,7 @@ public class StatsActivity extends PlusBaseActivity implements PlayerReceiver {
         mLogInView = findViewById(R.id.logInView);
         mStatsView = findViewById(R.id.statsView);
         mErrorView = findViewById(R.id.errorView);
+        mProgressView = findViewById(R.id.progressView);
         error = false;
 
         SignInButton signIn = (SignInButton) findViewById(R.id.plus_sign_in_button);

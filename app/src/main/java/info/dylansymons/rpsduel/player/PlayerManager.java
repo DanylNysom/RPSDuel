@@ -1,4 +1,4 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.player;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import info.dylansymons.rpsduel.R;
 import info.dylansymons.rpsduel.api.playerApi.PlayerApi;
 import info.dylansymons.rpsduel.api.playerApi.model.Player;
 
@@ -53,9 +54,13 @@ public class PlayerManager {
     }
 
     public String getName(Context context) {
-        return context
-                .getSharedPreferences(PLAYER_PREFS, Activity.MODE_PRIVATE)
-                .getString(NAME, "");
+        if (context != null) {
+            return context
+                    .getSharedPreferences(PLAYER_PREFS, Activity.MODE_PRIVATE)
+                    .getString(NAME, "");
+        } else {
+            return "";
+        }
     }
 
     public void updateName(Activity activity, String name, PlayerReceiver receiver) {

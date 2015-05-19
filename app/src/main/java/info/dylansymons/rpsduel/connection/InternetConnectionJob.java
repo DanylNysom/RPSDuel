@@ -1,6 +1,9 @@
-package info.dylansymons.rpsduel;
+package info.dylansymons.rpsduel.connection;
 
 import android.content.Context;
+
+import info.dylansymons.rpsduel.player.PlayerManager;
+import info.dylansymons.rpsduel.player.PlayerReceiver;
 
 /**
  * A job to be executed when the network connection state changes. After creating an instance, pass
